@@ -5,7 +5,7 @@ from PIL import Image
 import torch
 from pathlib import Path
 
-MODEL_PATH = Path("best.pt").as_posix()  # Convert to a POSIX-style path
+MODEL_PATH = "https://github.com/MelvernMogens/yolov5/blob/main/best.pt"  # Convert to a POSIX-style path
 
 
 # Load YOLOv5 model
