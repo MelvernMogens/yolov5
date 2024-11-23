@@ -3,9 +3,10 @@ import cv2
 import numpy as np
 from PIL import Image
 import torch
+from pathlib import Path
 
-# Path to the YOLOv5 model file
-MODEL_PATH = "best.pt"  # Update this path if needed
+MODEL_PATH = Path("best.pt").as_posix()  # Convert to a POSIX-style path
+
 
 # Load YOLOv5 model
 try:
