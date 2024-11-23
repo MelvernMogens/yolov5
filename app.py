@@ -1,25 +1,47 @@
+import os
+import requests
+import torch
 import streamlit as st
-import cv2
 import numpy as np
 from PIL import Image
-import torch
-from pathlib import Path
+import cv2
 
-MODEL_PATH = "https://github.com/MelvernMogens/yolov5/blob/main/best.pt"  # Convert to a POSIX-style path
+# URL to the YOLOv5 model file on GitHub
+MODEL_URL = "https://github.com/MelvernMogens/yolov5/raw/main/best.pt"
+MODEL_PATH = "best.pt"
 
+# Function to download the YOLOv5 model if it doesn't exist
+def download_model():
+    if not os.path.exists(MODEL_PATH):
+        st.info("Downloading YOLOv5 model...")
+        response = requests.get(MODEL_URL, stream=True)
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        st.success("Model downloaded successfully!")
 
-# Load YOLOv5 model
-try:
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=True)
-except Exception as e:
-    st.error(f"Error loading model: {e}")
-    st.stop()
+# Download the model
+download_model()
 
+# Load YOLOv5 model with caching to avoid reloading
+@st.cache_resource
+def load_model():
+    try:
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=MODEL_PATH, force_reload=False)
+        return model
+    except Exception as e:
+        st.error(f"Error loading YOLOv5 model: {e}")
+        st.stop()
+
+model = load_model()
+
+# Function to run YOLOv5 on an image
 def detect_image(image):
     """Run YOLOv5 model on the provided image."""
     results = model(image)
     return results
 
+# Streamlit UI
 st.title("YOLOv5 Object Detection")
 
 # Sidebar for navigation
@@ -68,4 +90,3 @@ elif page == "Webcam Detection":
             st_frame.image(detected_frame, channels="BGR", use_container_width=True)
 
         cap.release()
-
