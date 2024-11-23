@@ -5,7 +5,7 @@ from PIL import Image
 import torch
 
 # Path to the YOLOv5 model file
-MODEL_PATH = best.pt  # Update this path if needed
+MODEL_PATH = "best.pt"  # Update this path if needed
 
 # Load YOLOv5 model
 try:
